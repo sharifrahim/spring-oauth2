@@ -45,7 +45,14 @@ This project demonstrates how to implement OAuth2 login with GitHub and Google i
 
 ### Encrypting Client ID and Secret with Jasypt
 
-Follow this [official Jasypt encryption guide](https://www.jasypt.org/cli.html) to encrypt your Client ID and Client Secret. Update the encrypted values in the `application.yml` file under the respective `client-id` and `client-secret` fields.
+Follow this [official Jasypt encryption guide](https://www.jasypt.org/cli.html) to encrypt your Client ID and Client Secret.
+
+After encrypting the values, update the `application.yml` file under the `client-id` and `client-secret` fields for both GitHub and Google with the encrypted values:
+
+```yaml
+client-id: ENC(encrypted-client-id)
+client-secret: ENC(encrypted-client-secret)
+```
 
 ---
 
