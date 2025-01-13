@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+    <!-- Materialize CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <style>
+        body {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .btn {
+            background-color: #000 !important;
+            color: #fff !important;
+        }
+
+        .nav-wrapper {
+            background-color: #000 !important;
+        }
+
+        a {
+            color: #000;
+        }
+
+        a.btn {
+            color: #fff !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo" style="margin-left: 15px; color: #fff;">OAuth2-Demo</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="/logout" style="color: #fff;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 50px; text-align: center;">
+        <h1>Welcome to the Dashboard!</h1>
+        <p>Logged in as: <span th:text="${username} != null ? ${username} : 'Guest'"></span></p>
+    </div>
+
+    <!-- Materialize JavaScript -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
+    ></script>
+</body>
+</html>
