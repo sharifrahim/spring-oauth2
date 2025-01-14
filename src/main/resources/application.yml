@@ -21,3 +21,8 @@ jasypt:
     algorithm: PBEWithMD5AndDES
     # No IV (Initialization Vector) is used for this encryption setup
     iv-generator-classname: org.jasypt.iv.NoIvGenerator
+logging:
+  level:
+    org.springframework.security:
+      # Sets the logging level for Spring Security to TRACE for detailed debugging information
+      TRACE
