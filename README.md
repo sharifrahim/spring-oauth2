@@ -1,6 +1,6 @@
 # Spring Boot OAuth Login Demo
 
-This project demonstrates how to implement OAuth2 login with GitHub and Google in a Spring Boot application using encrypted client ID and client secret values with Jasypt.
+This project demonstrates how to implement OAuth2 login with GitHub and Google in a Spring Boot application using encrypted client ID and client secret values with Jasypt. The OAuth2 implementation uses the **Authorization Code Flow** for secure and efficient authentication.
 
 ---
 
@@ -45,7 +45,14 @@ This project demonstrates how to implement OAuth2 login with GitHub and Google i
 
 ### Encrypting Client ID and Secret with Jasypt
 
-Follow this [official Jasypt encryption guide](https://www.jasypt.org/cli.html) to encrypt your Client ID and Client Secret. Update the encrypted values in the `application.yml` file under the respective `client-id` and `client-secret` fields.
+Follow this [official Jasypt encryption guide](https://www.jasypt.org/cli.html) to encrypt your Client ID and Client Secret.
+
+After encrypting the values, update the `application.yml` file under the `client-id` and `client-secret` fields for both GitHub and Google with the encrypted values:
+
+```yaml
+client-id: ENC(encrypted-client-id)
+client-secret: ENC(encrypted-client-secret)
+```
 
 ---
 
@@ -55,7 +62,7 @@ Follow this [official Jasypt encryption guide](https://www.jasypt.org/cli.html) 
    
    ```bash
    git clone https://github.com/sharifrahim/spring-oauth2.git
-   cd oauth-login-demo
+   cd spring-oauth2
    ```
 
 2. **Run the Application**:
