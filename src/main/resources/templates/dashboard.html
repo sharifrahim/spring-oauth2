@@ -1,56 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Dashboard</title>
-    <!-- Materialize CSS CDN -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-    />
-    <style>
-        body {
-            background-color: #fff;
-            color: #000;
-        }
-
-        .btn {
-            background-color: #000 !important;
-            color: #fff !important;
-        }
-
-        .nav-wrapper {
-            background-color: #000 !important;
-        }
-
-        a {
-            color: #000;
-        }
-
-        a.btn {
-            color: #fff !important;
-        }
-    </style>
+    <title>SYSTEM DASHBOARD</title>
+    <link href="/css/retro.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav>
-        <div class="nav-wrapper">
-            <a href="#" class="brand-logo" style="margin-left: 15px; color: #fff;">OAuth2-Demo</a>
-            <ul class="right hide-on-med-and-down">
-                <li><a href="/logout" style="color: #fff;">Logout</a></li>
-            </ul>
-        </div>
-    </nav>
+    <div class="container">
+        <h1>SYSTEM STATUS :: DASHBOARD</h1>
 
-    <!-- Main Content -->
-    <div class="container" style="margin-top: 50px; text-align: center;">
-        <h1>Welcome to the Dashboard!</h1>
-        <p>Logged in as: <span th:text="${username} != null ? ${username} : 'Guest'"></span></p>
+        <div class="ascii-art">
+.------------------------------------.
+|       *** ACCESS GRANTED ***       |
+'------------------------------------'
+        </div>
+
+        <p>
+            > Authenticated User: <span th:text="${username} ?: 'UNKNOWN_USER'"></span>
+        </p>
+        <p>
+            > Session Status: ACTIVE
+        </p>
+        <p>
+            > System Time: <span id="system-time"></span>
+        </p>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/logout" class="btn">[LOGOUT] > TERMINATE SESSION</a>
+            <span class="cursor"></span>
+        </div>
     </div>
 
-    <!-- Materialize JavaScript -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
-    ></script>
+    <script>
+        function updateTime() {
+            document.getElementById('system-time').innerText = new Date().toUTCString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
 </body>
 </html>

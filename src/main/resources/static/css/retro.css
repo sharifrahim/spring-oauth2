@@ -1,0 +1,161 @@
+/* General Body and Terminal Styling */
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    margin: 0;
+    padding: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border: 2px solid #6c757d;
+    box-shadow: 0 0 15px rgba(108, 117, 125, 0.3);
+    padding: 20px;
+    background-color: #fff;
+}
+
+/* ASCII Art and Headers */
+.ascii-art {
+    font-family: 'Consolas', 'Monaco', monospace;
+    white-space: pre;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #495057;
+}
+
+h1, h2, h3, h4 {
+    border-bottom: 1px solid #6c757d;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #212529;
+}
+
+/* Forms and Inputs */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="number"] {
+    background-color: #fff;
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    width: calc(100% - 22px); /* Full width minus padding and border */
+    font-family: inherit;
+    text-transform: uppercase;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #80bdff;
+}
+
+/* Blinking Cursor */
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1.2em;
+    background-color: #495057;
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+    from, to { background-color: transparent; }
+    50% { background-color: #495057; }
+}
+
+/* Buttons and Links */
+.btn, a.btn {
+    background-color: #007bff;
+    color: #fff;
+    border: 1px solid #007bff;
+    padding: 10px 20px;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 10px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.btn:hover, a.btn:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    color: #fff;
+}
+
+.link, a {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.link:hover, a:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+/* Login Provider Buttons */
+.provider-list a {
+    display: block;
+    margin-bottom: 15px;
+    text-decoration: none;
+}
+
+/* Progress Bar */
+.progress-bar {
+    border: 1px solid #ced4da;
+    padding: 2px;
+    margin-bottom: 20px;
+    background-color: #e9ecef;
+}
+
+.progress-bar-inner {
+    background-color: #007bff;
+    height: 20px;
+    width: 0%; /* To be set dynamically */
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Removed flicker animation for light theme */
+
+/* Error messages */
+.error-message {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+.field-error {
+    color: #dc3545;
+    font-size: 0.9em;
+    margin-top: 5px;
+}

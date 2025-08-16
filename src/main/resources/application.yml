@@ -1,28 +1,38 @@
 spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:true}
   security:
     oauth2:
       client:
         registration:
           github:
-            # The client ID for GitHub OAuth2, encrypted using Jasypt
-            client-id: ENC(your-encrypted-github-client-id)
-            # The client secret for GitHub OAuth2, encrypted using Jasypt
-            client-secret: ENC(your-encrypted-github-client-secret)
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
           google:
-            # The client ID for Google OAuth2, encrypted using Jasypt
-            client-id: ENC(your-encrypted-google-client-id)
-            # The client secret for Google OAuth2, encrypted using Jasypt
-            client-secret: ENC(your-encrypted-google-client-secret)
-jasypt:
-  encryptor:
-    # The password used to decrypt encrypted values, can be set as an environment variable or default to 'changeit'
-    password: ${JASYPT_ENCRYPTOR_PASSWORD:changeit}
-    # Specifies the encryption algorithm used, in this case PBEWithMD5AndDES
-    algorithm: PBEWithMD5AndDES
-    # No IV (Initialization Vector) is used for this encryption setup
-    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+cleanup:
+  pending-accounts:
+    enabled: true
+    schedule: "0 0 2 * * ?" # Every day at 2 AM
+    retention-period-days: 7
+security:
+  rate-limiting:
+    enabled: true
+    ip-max-attempts: 10
+    email-max-attempts: 5
+    time-window-in-minutes: 15
+    block-duration-in-minutes: 60
 logging:
   level:
-    org.springframework.security:
-      # Sets the logging level for Spring Security to TRACE for detailed debugging information
-      TRACE
+    org.springframework.security: ${SECURITY_LOG_LEVEL:INFO}

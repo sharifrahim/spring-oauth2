@@ -3,41 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- Materialize CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-    <!-- Font Awesome CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <title>AUTHENTICATION REQUIRED</title>
+    <link href="/css/retro.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <div class="row" style="margin-top: 10%;">
-            <div class="col s12 m6 offset-m3">
-                <div class="card z-depth-3">
-                    <div class="card-content center-align">
-                        <h4 class="card-title">LOGIN</h4>
-                        <div class="row" style="margin-top: 20px;">
-                            <div class="col s12">
-                                <a href="/oauth2/authorization/github" class="btn-large waves-effect waves-light white black-text full-width">
-                                    <i class="fab fa-github left"></i> Login with GitHub
-                                </a>
-                            </div>
-                            <div class="col s12" style="margin-top: 20px;">
-                                <a href="/oauth2/authorization/google" class="btn-large waves-effect waves-light white black-text full-width">
-                                    <i class="fab fa-google left"></i> Login with Google
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-action center-align">
-                        <a href="/" class="black-text"><< Back</a>
-                    </div>
-                </div>
-            </div>
+        <div class="ascii-art">
+.-----------------------------------------------------------------.
+|  [S]ecure [A]uthentication [M]odule - v1.0                      |
+|  -----------------------------------------------------------  |
+|  PLEASE AUTHENTICATE TO CONTINUE...                             |
+'-----------------------------------------------------------------'
+        </div>
+
+        <h4>LOGIN_</h4>
+
+        <div class="provider-list">
+            <a href="/oauth2/authorization/github" class="btn">
+                [G] > LOGIN WITH GITHUB
+            </a>
+            <a href="/oauth2/authorization/google" class="btn">
+                [O] > LOGIN WITH GOOGLE
+            </a>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/" class="link"><< [ESC] CANCEL AND RETURN</a>
+            <span class="cursor"></span>
         </div>
     </div>
-
-    <!-- Materialize JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </html>

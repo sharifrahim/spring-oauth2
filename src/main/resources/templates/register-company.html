@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>REGISTRATION :: COMPANY INFO</title>
+    <link href="/css/retro.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>REGISTRATION - STEP 2/2</h1>
+        <div class="progress-bar">
+            <div class="progress-bar-inner" style="width: 75%;">[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓......] 75%</div>
+        </div>
+        <h4>ENTER COMPANY DETAILS (OPTIONAL)<span class="cursor"></span></h4>
+
+        <form th:action="@{/register/company}" th:object="${companyDataDto}" method="post">
+            <div class="form-group">
+                <label for="companyName">COMPANY NAME:</label>
+                <input type="text" id="companyName" th:field="*{companyName}" />
+                <div th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}" class="field-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="position">POSITION:</label>
+                <input type="text" id="position" th:field="*{position}" />
+                <div th:if="${#fields.hasErrors('position')}" th:errors="*{position}" class="field-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="companySize">COMPANY SIZE:</label>
+                <input type="number" id="companySize" th:field="*{companySize}" />
+                <div th:if="${#fields.hasErrors('companySize')}" th:errors="*{companySize}" class="field-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="industry">INDUSTRY:</label>
+                <input type="text" id="industry" th:field="*{industry}" />
+                <div th:if="${#fields.hasErrors('industry')}" th:errors="*{industry}" class="field-error"></div>
+            </div>
+
+            <button type="submit" class="btn">[ENTER] > SUBMIT AND COMPLETE REGISTRATION</button>
+        </form>
+
+        <form th:action="@{/register/skip-company}" method="post" style="margin-top: 20px;">
+            <button type="submit" class="btn">[F8] > SKIP THIS STEP</button>
+        </form>
+
+    </div>
+</body>
+</html>

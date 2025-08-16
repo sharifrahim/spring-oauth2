@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ERROR 404 :: NOT FOUND</title>
+    <link href="/css/retro.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>COMMAND NOT FOUND</h1>
+        <div class="ascii-art">
+C:\> <span th:text="${path}"></span>
+Bad command or file name
+        </div>
+        <p>
+            The resource you requested could not be located in the current directory.
+        </p>
+        <p>
+            > ERROR CODE: 404<br>
+            > Check the URL for typing errors and try again.<br>
+        </p>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/" class="btn">[C:] > RETURN TO ROOT</a>
+            <span class="cursor"></span>
+        </div>
+    </div>
+</body>
+</html>
