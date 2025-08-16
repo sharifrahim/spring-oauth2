@@ -13,7 +13,7 @@
         </div>
         <h4>ENTER PERSONAL DETAILS<span class="cursor"></span></h4>
 
-        <form th:action="@{/register/personal(token=${token})}" th:object="${personalDataDto}" method="post">
+        <form th:action="@{/register/personal}" th:object="${personalDataDto}" method="post">
             <div class="form-group">
                 <label for="firstName">FIRST NAME:</label>
                 <input type="text" id="firstName" th:field="*{firstName}" />

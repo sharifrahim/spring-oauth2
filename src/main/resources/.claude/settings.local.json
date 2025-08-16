@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(mvn:*)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Sharif.rahim\\Documents\\demo\\boilerplate-oauth2"
+    ]
+  }
+}

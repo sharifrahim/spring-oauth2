@@ -13,7 +13,7 @@
         </div>
         <h4>ENTER COMPANY DETAILS (OPTIONAL)<span class="cursor"></span></h4>
 
-        <form th:action="@{/register/company(token=${token})}" th:object="${companyDataDto}" method="post">
+        <form th:action="@{/register/company}" th:object="${companyDataDto}" method="post">
             <div class="form-group">
                 <label for="companyName">COMPANY NAME:</label>
                 <input type="text" id="companyName" th:field="*{companyName}" />
@@ -38,7 +38,7 @@
             <button type="submit" class="btn">[ENTER] > SUBMIT AND COMPLETE REGISTRATION</button>
         </form>
 
-        <form th:action="@{/register/skip-company(token=${token})}" method="post" style="margin-top: 20px;">
+        <form th:action="@{/register/skip-company}" method="post" style="margin-top: 20px;">
             <button type="submit" class="btn">[F8] > SKIP THIS STEP</button>
         </form>
 
