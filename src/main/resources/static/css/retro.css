@@ -1,7 +1,7 @@
 /* General Body and Terminal Styling */
 body {
-    background-color: #000;
-    color: #0F0;
+    background-color: #f8f9fa;
+    color: #333;
     font-family: 'Courier New', Courier, monospace;
     font-size: 16px;
     margin: 0;
@@ -14,10 +14,10 @@ body {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    border: 2px solid #0F0;
-    box-shadow: 0 0 15px #0F0;
+    border: 2px solid #6c757d;
+    box-shadow: 0 0 15px rgba(108, 117, 125, 0.3);
     padding: 20px;
-    animation: flicker 0.1s infinite;
+    background-color: #fff;
 }
 
 /* ASCII Art and Headers */
@@ -27,14 +27,15 @@ body {
     text-align: center;
     font-size: 14px;
     margin-bottom: 20px;
-    color: #0F0;
+    color: #495057;
 }
 
 h1, h2, h3, h4 {
-    border-bottom: 1px solid #0F0;
+    border-bottom: 1px solid #6c757d;
     padding-bottom: 10px;
     margin-bottom: 20px;
     text-align: center;
+    color: #212529;
 }
 
 /* Forms and Inputs */
@@ -57,9 +58,9 @@ input[type="email"],
 input[type="password"],
 input[type="date"],
 input[type="number"] {
-    background-color: #000;
-    color: #0F0;
-    border: 1px solid #0F0;
+    background-color: #fff;
+    color: #495057;
+    border: 1px solid #ced4da;
     padding: 10px;
     width: calc(100% - 22px); /* Full width minus padding and border */
     font-family: inherit;
@@ -68,7 +69,8 @@ input[type="number"] {
 
 input:focus {
     outline: none;
-    box-shadow: 0 0 10px #0F0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #80bdff;
 }
 
 /* Blinking Cursor */
@@ -76,21 +78,21 @@ input:focus {
     display: inline-block;
     width: 10px;
     height: 1.2em;
-    background-color: #0F0;
+    background-color: #495057;
     animation: blink 1s step-end infinite;
     vertical-align: middle;
 }
 
 @keyframes blink {
     from, to { background-color: transparent; }
-    50% { background-color: #0F0; }
+    50% { background-color: #495057; }
 }
 
 /* Buttons and Links */
 .btn, a.btn {
-    background-color: #000;
-    color: #0F0;
-    border: 1px solid #0F0;
+    background-color: #007bff;
+    color: #fff;
+    border: 1px solid #007bff;
     padding: 10px 20px;
     text-decoration: none;
     text-transform: uppercase;
@@ -98,22 +100,23 @@ input:focus {
     display: inline-block;
     margin-top: 10px;
     text-align: center;
+    border-radius: 4px;
 }
 
 .btn:hover, a.btn:hover {
-    background-color: #0F0;
-    color: #000;
+    background-color: #0056b3;
+    border-color: #0056b3;
+    color: #fff;
 }
 
 .link, a {
-    color: #0F0;
+    color: #007bff;
     text-decoration: underline;
 }
 
 .link:hover, a:hover {
+    color: #0056b3;
     text-decoration: none;
-    background-color: #0F0;
-    color: #000;
 }
 
 /* Login Provider Buttons */
@@ -125,35 +128,34 @@ input:focus {
 
 /* Progress Bar */
 .progress-bar {
-    border: 1px solid #0F0;
+    border: 1px solid #ced4da;
     padding: 2px;
     margin-bottom: 20px;
+    background-color: #e9ecef;
 }
 
 .progress-bar-inner {
-    background-color: #0F0;
+    background-color: #007bff;
     height: 20px;
     width: 0%; /* To be set dynamically */
     text-align: center;
-    color: #000;
+    color: #fff;
     font-weight: bold;
 }
 
-/* Flicker Animation for CRT effect */
-@keyframes flicker {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.95; }
-}
+/* Removed flicker animation for light theme */
 
 /* Error messages */
 .error-message {
-    color: #F00;
-    border: 1px solid #F00;
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
     padding: 10px;
     margin-bottom: 15px;
+    border-radius: 4px;
 }
 .field-error {
-    color: #F00;
+    color: #dc3545;
     font-size: 0.9em;
     margin-top: 5px;
 }
