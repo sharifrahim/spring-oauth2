@@ -64,20 +64,24 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             account.setPendingExpiresAt(Instant.now().plus(7, ChronoUnit.DAYS));
             account = accountService.saveAccount(account);
 
-            RegistrationSession session = registrationSessionService.createSession(account);
-            targetUrl = "/register?token=" + session.getSessionToken();
+            // No need to create registration session - just redirect to register
+            targetUrl = "/register";
         } else {
             account = existingAccountOpt.get();
             targetUrl = "/dashboard";
         }
 
-        // Link OAuth provider
+        // Link OAuth provider (only if not already linked)
         OAuthProviderType providerType = OAuthProviderType.valueOf(registrationId.toUpperCase());
-        OAuthProvider provider = new OAuthProvider();
-        provider.setAccount(account);
-        provider.setProvider(providerType);
-        provider.setProviderUserId(oauthUser.getName());
-        oauthProviderService.save(provider);
+        Optional<OAuthProvider> existingProvider = oauthProviderService.findByAccountIdAndProvider(account.getId(), providerType);
+        
+        if (existingProvider.isEmpty()) {
+            OAuthProvider provider = new OAuthProvider();
+            provider.setAccount(account);
+            provider.setProvider(providerType);
+            provider.setProviderUserId(oauthUser.getName());
+            oauthProviderService.save(provider);
+        }
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }

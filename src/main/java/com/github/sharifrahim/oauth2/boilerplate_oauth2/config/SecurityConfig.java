@@ -30,14 +30,16 @@ public class SecurityConfig {
     	http
         .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests(a -> 
-            a.requestMatchers("/", "/error","/login","/logout", "/oauth-error").permitAll()
+            a.requestMatchers("/", "/error","/login","/logout", "/oauth-error", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/h2-console/**").permitAll()
              .anyRequest().authenticated()
         )
         .exceptionHandling(e -> 
         	e.authenticationEntryPoint((request, response, authException) -> 
         	response.sendRedirect("/login"))
         )
-        .csrf(csrf -> csrf.disable())
+        .csrf(csrf -> csrf
+            .ignoringRequestMatchers("/h2-console/**")
+            .disable())
         //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
         .logout(l -> l
                 .logoutUrl("/logout") // URL for logging out
@@ -50,7 +52,8 @@ public class SecurityConfig {
         		.loginPage("/login")
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler)
-            );
+            )
+        .headers(headers -> headers.frameOptions().sameOrigin());
 
     return http.build();
     
