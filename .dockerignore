@@ -1,0 +1,10 @@
+.git
+.gitignore
+.vscode
+.settings
+target
+.env
+.env.example
+README.md
+mvnw
+mvnw.cmd
