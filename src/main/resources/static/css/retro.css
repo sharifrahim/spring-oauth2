@@ -1,0 +1,159 @@
+/* General Body and Terminal Styling */
+body {
+    background-color: #000;
+    color: #0F0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    margin: 0;
+    padding: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border: 2px solid #0F0;
+    box-shadow: 0 0 15px #0F0;
+    padding: 20px;
+    animation: flicker 0.1s infinite;
+}
+
+/* ASCII Art and Headers */
+.ascii-art {
+    font-family: 'Consolas', 'Monaco', monospace;
+    white-space: pre;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #0F0;
+}
+
+h1, h2, h3, h4 {
+    border-bottom: 1px solid #0F0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Forms and Inputs */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="number"] {
+    background-color: #000;
+    color: #0F0;
+    border: 1px solid #0F0;
+    padding: 10px;
+    width: calc(100% - 22px); /* Full width minus padding and border */
+    font-family: inherit;
+    text-transform: uppercase;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 10px #0F0;
+}
+
+/* Blinking Cursor */
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1.2em;
+    background-color: #0F0;
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+    from, to { background-color: transparent; }
+    50% { background-color: #0F0; }
+}
+
+/* Buttons and Links */
+.btn, a.btn {
+    background-color: #000;
+    color: #0F0;
+    border: 1px solid #0F0;
+    padding: 10px 20px;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.btn:hover, a.btn:hover {
+    background-color: #0F0;
+    color: #000;
+}
+
+.link, a {
+    color: #0F0;
+    text-decoration: underline;
+}
+
+.link:hover, a:hover {
+    text-decoration: none;
+    background-color: #0F0;
+    color: #000;
+}
+
+/* Login Provider Buttons */
+.provider-list a {
+    display: block;
+    margin-bottom: 15px;
+    text-decoration: none;
+}
+
+/* Progress Bar */
+.progress-bar {
+    border: 1px solid #0F0;
+    padding: 2px;
+    margin-bottom: 20px;
+}
+
+.progress-bar-inner {
+    background-color: #0F0;
+    height: 20px;
+    width: 0%; /* To be set dynamically */
+    text-align: center;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Flicker Animation for CRT effect */
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.95; }
+}
+
+/* Error messages */
+.error-message {
+    color: #F00;
+    border: 1px solid #F00;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+.field-error {
+    color: #F00;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
