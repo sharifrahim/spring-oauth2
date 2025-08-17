@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SYSTEM DASHBOARD</title>
     <link href="/css/retro.css" rel="stylesheet">
 </head>
@@ -18,11 +20,45 @@
             > Authenticated User: <span th:text="${username} ?: 'UNKNOWN_USER'"></span>
         </p>
         <p>
+            > Email Address: <span th:text="${userEmail} ?: 'UNKNOWN_EMAIL'"></span>
+        </p>
+        <p>
             > Session Status: ACTIVE
         </p>
         <p>
             > System Time: <span id="system-time"></span>
         </p>
+
+        <!-- Company Information Section -->
+        <div th:if="${companyData != null}" class="dashboard-section">
+            <h3>COMPANY INFORMATION</h3>
+            <p>
+                > Company Name: <span th:text="${companyData.companyName}"></span>
+            </p>
+            <p>
+                > Position: <span th:text="${companyData.position}"></span>
+            </p>
+            <p>
+                > Company Size: <span th:text="${companyData.companySize}"></span>
+            </p>
+            <p th:if="${companyData.industry != null and !#strings.isEmpty(companyData.industry)}">
+                > Industry: <span th:text="${companyData.industry}"></span>
+            </p>
+        </div>
+
+        <!-- Personal Information Section -->
+        <div th:if="${personalData != null}" class="dashboard-section">
+            <h3>PERSONAL INFORMATION</h3>
+            <p>
+                > Full Name: <span th:text="${personalData.firstName + ' ' + personalData.lastName}"></span>
+            </p>
+            <p th:if="${personalData.phone != null and !#strings.isEmpty(personalData.phone)}">
+                > Phone: <span th:text="${personalData.phone}"></span>
+            </p>
+            <p>
+                > Date of Birth: <span th:text="${personalData.dateOfBirth}"></span>
+            </p>
+        </div>
 
         <div style="text-align: center; margin-top: 30px;">
             <a href="/logout" class="btn">[LOGOUT] > TERMINATE SESSION</a>

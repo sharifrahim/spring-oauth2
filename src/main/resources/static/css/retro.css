@@ -5,7 +5,7 @@ body {
     font-family: 'Courier New', Courier, monospace;
     font-size: 16px;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -16,8 +16,43 @@ body {
     margin: 0 auto;
     border: 2px solid #6c757d;
     box-shadow: 0 0 15px rgba(108, 117, 125, 0.3);
-    padding: 20px;
+    padding: 15px;
     background-color: #fff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 5px;
+        font-size: 14px;
+    }
+    
+    .container {
+        padding: 10px;
+        border: 1px solid #6c757d;
+        box-shadow: 0 0 10px rgba(108, 117, 125, 0.2);
+    }
+    
+    h1, h2, h3, h4 {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 12px;
+        padding: 2px;
+    }
+    
+    .container {
+        padding: 8px;
+    }
+    
+    h1, h2, h3, h4 {
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
 }
 
 /* ASCII Art and Headers */
@@ -65,6 +100,30 @@ input[type="number"] {
     width: calc(100% - 22px); /* Full width minus padding and border */
     font-family: inherit;
     text-transform: uppercase;
+    box-sizing: border-box;
+}
+
+/* Responsive form inputs */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"],
+    input[type="number"] {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"],
+    input[type="number"] {
+        padding: 6px;
+        font-size: 12px;
+    }
 }
 
 input:focus {
@@ -88,11 +147,11 @@ input:focus {
     50% { background-color: #495057; }
 }
 
-/* Buttons and Links */
+/* Buttons and Links - RetroUI Style */
 .btn, a.btn {
-    background-color: #007bff;
-    color: #fff;
-    border: 1px solid #007bff;
+    background-color: #f59e0b;
+    color: #000;
+    border: 2px solid #000;
     padding: 10px 20px;
     text-decoration: none;
     text-transform: uppercase;
@@ -100,13 +159,42 @@ input:focus {
     display: inline-block;
     margin-top: 10px;
     text-align: center;
-    border-radius: 4px;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 #000;
+    transition: all 0.1s ease-in-out;
+    font-weight: bold;
+    font-family: inherit;
 }
 
 .btn:hover, a.btn:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-    color: #fff;
+    background-color: #d97706;
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #000;
+    color: #000;
+}
+
+.btn:active, a.btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+/* Responsive buttons */
+@media (max-width: 768px) {
+    .btn, a.btn {
+        padding: 8px 16px;
+        font-size: 14px;
+        margin-top: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn, a.btn {
+        padding: 6px 12px;
+        font-size: 12px;
+        margin-top: 6px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
 
 .link, a {
@@ -128,19 +216,36 @@ input:focus {
 
 /* Progress Bar */
 .progress-bar {
-    border: 1px solid #ced4da;
+    border: 2px solid #000;
     padding: 2px;
     margin-bottom: 20px;
     background-color: #e9ecef;
+    box-shadow: 2px 2px 0 #000;
 }
 
 .progress-bar-inner {
-    background-color: #007bff;
+    background-color: #f59e0b;
     height: 20px;
     width: 0%; /* To be set dynamically */
     text-align: center;
-    color: #fff;
+    color: #000;
     font-weight: bold;
+    border-right: 2px solid #000;
+}
+
+/* Responsive progress bar */
+@media (max-width: 768px) {
+    .progress-bar-inner {
+        height: 16px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .progress-bar-inner {
+        height: 14px;
+        font-size: 10px;
+    }
 }
 
 /* Removed flicker animation for light theme */
@@ -158,4 +263,43 @@ input:focus {
     color: #dc3545;
     font-size: 0.9em;
     margin-top: 5px;
+}
+
+/* Dashboard sections styling */
+.dashboard-section {
+    margin-top: 20px;
+    border-top: 2px solid #6c757d;
+    padding-top: 15px;
+}
+
+.dashboard-section h3 {
+    border-bottom: 1px solid #6c757d;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+/* Responsive dashboard sections */
+@media (max-width: 768px) {
+    .dashboard-section {
+        margin-top: 15px;
+        padding-top: 10px;
+    }
+    
+    .dashboard-section h3 {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-section {
+        margin-top: 10px;
+        padding-top: 8px;
+    }
+    
+    .dashboard-section h3 {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+    }
 }

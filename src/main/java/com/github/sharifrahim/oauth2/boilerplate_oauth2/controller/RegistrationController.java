@@ -65,6 +65,7 @@ public class RegistrationController {
         
         ModelAndView mav = new ModelAndView("register-personal");
         mav.addObject("personalDataDto", new PersonalDataDto());
+        mav.addObject("userEmail", email);
         return mav;
     }
 
