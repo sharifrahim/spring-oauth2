@@ -15,11 +15,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "oauth_providers", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"account_id", "provider"})
 })
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OAuthProvider extends Auditable {
 
     @Id
@@ -36,37 +44,4 @@ public class OAuthProvider extends Auditable {
 
     @Column(name = "provider_user_id", nullable = false)
     private String providerUserId;
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public OAuthProviderType getProvider() {
-        return provider;
-    }
-
-    public void setProvider(OAuthProviderType provider) {
-        this.provider = provider;
-    }
-
-    public String getProviderUserId() {
-        return providerUserId;
-    }
-
-    public void setProviderUserId(String providerUserId) {
-        this.providerUserId = providerUserId;
-    }
 }

@@ -8,28 +8,31 @@
 </head>
 <body>
     <div class="container">
-        <div class="ascii-art">
-.-----------------------------------------------------------------.
-|  [S]ecure [A]uthentication [M]odule - v1.0                      |
-|  -----------------------------------------------------------  |
-|  PLEASE AUTHENTICATE TO CONTINUE...                             |
-'-----------------------------------------------------------------'
-        </div>
+        <div class="card inline-block border-2 shadow-md hover:shadow-xs" style="max-width: 500px; margin: 0 auto;">
+            <div class="card-header">
+                <div class="card-title">
+                    <h4>Secure Authentication Module - v1.0</h4>
+                </div>
+                <div class="card-description">
+                    <p>PLEASE AUTHENTICATE TO CONTINUE...</p>
+                </div>
+            </div>
+            
+            <div class="card-content">
+                <div class="provider-list">
+                    <a href="/oauth2/authorization/github" class="btn">
+                        [G] > LOGIN WITH GITHUB
+                    </a>
+                    <a href="/oauth2/authorization/google" class="btn">
+                        [O] > LOGIN WITH GOOGLE
+                    </a>
+                </div>
 
-        <h4>LOGIN_</h4>
-
-        <div class="provider-list">
-            <a href="/oauth2/authorization/github" class="btn">
-                [G] > LOGIN WITH GITHUB
-            </a>
-            <a href="/oauth2/authorization/google" class="btn">
-                [O] > LOGIN WITH GOOGLE
-            </a>
-        </div>
-
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="/" class="link"><< [ESC] CANCEL AND RETURN</a>
-            <span class="cursor"></span>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="/" class="link"><< [ESC] CANCEL AND RETURN</a>
+                    <span class="cursor"></span>
+                </div>
+            </div>
         </div>
     </div>
 </body>

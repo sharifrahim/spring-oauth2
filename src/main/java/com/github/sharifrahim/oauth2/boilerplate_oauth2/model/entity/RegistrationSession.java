@@ -17,12 +17,20 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "registration_sessions", uniqueConstraints = {
     @UniqueConstraint(columnNames = "account_id"),
     @UniqueConstraint(columnNames = "session_token")
 })
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegistrationSession extends Auditable {
 
     @Id
@@ -48,61 +56,4 @@ public class RegistrationSession extends Auditable {
 
     @Column(name = "expires_at", nullable = false)
     private Instant expiresAt;
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public RegistrationState getCurrentState() {
-        return currentState;
-    }
-
-    public void setCurrentState(RegistrationState currentState) {
-        this.currentState = currentState;
-    }
-
-    public String getPersonalData() {
-        return personalData;
-    }
-
-    public void setPersonalData(String personalData) {
-        this.personalData = personalData;
-    }
-
-    public String getCompanyData() {
-        return companyData;
-    }
-
-    public void setCompanyData(String companyData) {
-        this.companyData = companyData;
-    }
-
-    public String getSessionToken() {
-        return sessionToken;
-    }
-
-    public void setSessionToken(String sessionToken) {
-        this.sessionToken = sessionToken;
-    }
-
-    public Instant getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(Instant expiresAt) {
-        this.expiresAt = expiresAt;
-    }
 }

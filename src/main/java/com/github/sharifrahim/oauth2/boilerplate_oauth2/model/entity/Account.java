@@ -13,11 +13,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "accounts", uniqueConstraints = {
     @UniqueConstraint(columnNames = "email")
 })
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Account extends Auditable {
 
     @Id
@@ -35,45 +43,4 @@ public class Account extends Auditable {
 
     @Column(name = "pending_expires_at")
     private Instant pendingExpiresAt;
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public AccountStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AccountStatus status) {
-        this.status = status;
-    }
-
-    public Instant getPendingExpiresAt() {
-        return pendingExpiresAt;
-    }
-
-    public void setPendingExpiresAt(Instant pendingExpiresAt) {
-        this.pendingExpiresAt = pendingExpiresAt;
-    }
 }

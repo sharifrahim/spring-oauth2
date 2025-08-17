@@ -13,9 +13,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "login_attempts")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoginAttempt extends Auditable {
 
     @Id
@@ -41,61 +49,4 @@ public class LoginAttempt extends Auditable {
 
     @Column(name = "expires_at", nullable = false)
     private Instant expiresAt;
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
-    public AttemptType getAttemptType() {
-        return attemptType;
-    }
-
-    public void setAttemptType(AttemptType attemptType) {
-        this.attemptType = attemptType;
-    }
-
-    public AttemptStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AttemptStatus status) {
-        this.status = status;
-    }
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-
-    public Instant getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(Instant expiresAt) {
-        this.expiresAt = expiresAt;
-    }
 }
