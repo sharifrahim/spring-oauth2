@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REGISTRATION INCOMPLETE</title>
+    <link href="/css/retro.css" rel="stylesheet">
+    <style>
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #6c757d;
+            border-radius: 50%;
+            border-top-color: #495057;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .countdown {
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .redirect-info {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px solid #6c757d;
+            background-color: #f8f9fa;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background-color: #e9ecef;
+            border: 1px solid #6c757d;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #495057;
+            width: 0%;
+            animation: fillProgress 5s linear forwards;
+        }
+        
+        @keyframes fillProgress {
+            to { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SYSTEM STATUS :: REGISTRATION INCOMPLETE</h1>
+
+        <div class="ascii-art">
+.------------------------------------.
+|       *** ATTENTION REQUIRED ***   |
+'------------------------------------'
+        </div>
+
+        <div class="redirect-info">
+            <p>
+                > STATUS: REGISTRATION NOT COMPLETE
+            </p>
+            <p>
+                > ACTION: YOUR ACCOUNT SETUP IS INCOMPLETE
+            </p>
+            <p>
+                > SYSTEM: REDIRECTING TO REGISTRATION MODULE...
+            </p>
+            
+            <div style="margin-top: 20px;">
+                <span class="loader"></span>
+                <span>PROCESSING... REDIRECTING IN <span class="countdown" id="countdown">5</span> SECONDS</span>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <p>
+                > IF NOT REDIRECTED AUTOMATICALLY, <a href="/register" class="btn">CLICK HERE</a>
+            </p>
+            <span class="cursor"></span>
+        </div>
+    </div>
+
+    <script>
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+        
+        const timer = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(timer);
+                window.location.href = '/register';
+            }
+        }, 1000);
+        
+        // Auto-redirect after 5 seconds regardless
+        setTimeout(() => {
+            window.location.href = '/register';
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -39,7 +39,7 @@ public class RegistrationSessionService {
         
         RegistrationSession session = new RegistrationSession();
         session.setAccount(managedAccount);
-        session.setCurrentState(RegistrationState.PENDING_OAUTH);
+        session.setCurrentState(RegistrationState.PERSONAL_INFO);
         session.setSessionToken(UUID.randomUUID().toString());
         session.setExpiresAt(Instant.now().plus(1, ChronoUnit.HOURS)); // Session expires in 1 hour
         return sessionRepository.save(session);

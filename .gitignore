@@ -51,3 +51,4 @@ build/
 
 # Ignore dependency libraries
 /node_modules/
+.claude/ 

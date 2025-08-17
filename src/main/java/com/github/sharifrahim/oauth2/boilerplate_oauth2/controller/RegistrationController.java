@@ -2,8 +2,7 @@ package com.github.sharifrahim.oauth2.boilerplate_oauth2.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.config.StateMachineFactory;
+import com.github.sharifrahim.oauth2.boilerplate_oauth2.service.StateMachineManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,7 +17,9 @@ import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.domain.Registratio
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.domain.RegistrationState;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.dto.CompanyDataDto;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.dto.PersonalDataDto;
+import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.entity.Account;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.entity.RegistrationSession;
+import com.github.sharifrahim.oauth2.boilerplate_oauth2.service.AccountService;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.service.RegistrationSessionService;
 
 import jakarta.validation.Valid;
@@ -28,15 +29,35 @@ import jakarta.validation.Valid;
 public class RegistrationController {
 
     private final RegistrationSessionService sessionService;
-    private final StateMachineFactory<RegistrationState, RegistrationEvent> stateMachineFactory;
+    private final AccountService accountService;
+    private final StateMachineManager stateMachineManager;
 
-    public RegistrationController(RegistrationSessionService sessionService, StateMachineFactory<RegistrationState, RegistrationEvent> stateMachineFactory) {
+    public RegistrationController(RegistrationSessionService sessionService, AccountService accountService, StateMachineManager stateMachineManager) {
         this.sessionService = sessionService;
-        this.stateMachineFactory = stateMachineFactory;
+        this.accountService = accountService;
+        this.stateMachineManager = stateMachineManager;
     }
 
     @GetMapping
     public String showRegistrationPage(Authentication auth) {
+        // Create or get registration session and link with account
+        String email = extractEmailFromAuth(auth);
+        
+        // Get the account
+        Account account = accountService.getAccountByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Account not found for email: " + email));
+        
+        // Create registration session if it doesn't exist
+        RegistrationSession session = sessionService.getOrCreateForUser(email);
+        
+        // Link session with account if not already linked
+        if (session.getAccount() == null) {
+            session.setAccount(account);
+            session.setCurrentState(RegistrationState.PERSONAL_INFO); // Start with PERSONAL_INFO
+            sessionService.save(session);
+            System.out.println("✅ Created RegistrationSession linked to account for: " + email);
+        }
+        
         // User is authenticated via OAuth, start with personal info
         return "redirect:/register/personal";
     }
@@ -47,20 +68,11 @@ public class RegistrationController {
         String email = extractEmailFromAuth(auth);
         RegistrationSession session = sessionService.getOrCreateForUser(email);
         
-        if (session.getCurrentState() == RegistrationState.PENDING_OAUTH) {
-            // Transition from PENDING_OAUTH to PERSONAL_INFO
-            StateMachine<RegistrationState, RegistrationEvent> sm = stateMachineFactory.getStateMachine();
-            sm.start(); // Start the state machine
-            sm.getStateMachineAccessor().doWithAllRegions(sma -> sma.resetStateMachine(new org.springframework.statemachine.support.DefaultStateMachineContext<>(session.getCurrentState(), null, null, null)));
-            
-            System.out.println("State machine current state before START_PERSONAL: " + sm.getState().getId());
-            boolean success = sm.sendEvent(RegistrationEvent.START_PERSONAL);
-            System.out.println("START_PERSONAL event success: " + success);
-            System.out.println("State machine current state after START_PERSONAL: " + sm.getState().getId());
-            
-            session.setCurrentState(sm.getState().getId());
+        // Ensure session is in PERSONAL_INFO state (should already be set from showRegistrationPage)
+        if (session.getCurrentState() != RegistrationState.PERSONAL_INFO) {
+            session.setCurrentState(RegistrationState.PERSONAL_INFO);
             sessionService.save(session);
-            System.out.println("Transitioned to state: " + session.getCurrentState());
+            System.out.println("Set session state to PERSONAL_INFO for: " + email);
         }
         
         ModelAndView mav = new ModelAndView("register-personal");
@@ -79,26 +91,12 @@ public class RegistrationController {
         String email = extractEmailFromAuth(auth);
         RegistrationSession session = sessionService.getOrCreateForUser(email);
 
-        StateMachine<RegistrationState, RegistrationEvent> sm = stateMachineFactory.getStateMachine();
-        sm.start(); // Start the state machine
+        // Use StateMachineManager to handle state machine operations
+        boolean success = stateMachineManager.sendEvent(session, RegistrationEvent.SUBMIT_PERSONAL, personalDataDto);
         
-        // Pass data through state machine extended state BEFORE resetting context
-        sm.getExtendedState().getVariables().put("personalData", personalDataDto);
-        sm.getExtendedState().getVariables().put("session", session);
-        
-        sm.getStateMachineAccessor().doWithAllRegions(sma -> sma.resetStateMachine(new org.springframework.statemachine.support.DefaultStateMachineContext<>(session.getCurrentState(), null, null, null)));
-        
-        System.out.println("Current state before event: " + sm.getState().getId());
-        System.out.println("Session current state: " + session.getCurrentState());
-        boolean success = sm.sendEvent(RegistrationEvent.SUBMIT_PERSONAL);
-        System.out.println("Event success: " + success);
-        System.out.println("State after event: " + sm.getState().getId());
         if (!success) {
             return "register-personal"; // Validation failed
         }
-        
-        session.setCurrentState(sm.getState().getId());
-        sessionService.save(session);
 
         return "redirect:/register/company";
     }
@@ -112,28 +110,26 @@ public class RegistrationController {
 
     @PostMapping("/company")
     public String submitCompanyForm(Authentication auth, @Valid @ModelAttribute("companyDataDto") CompanyDataDto companyDataDto, BindingResult bindingResult) throws Exception {
+        System.out.println("=== COMPANY FORM SUBMITTED ===");
+        System.out.println("Company data DTO: " + companyDataDto);
+        
         if (bindingResult.hasErrors()) {
+            System.err.println("❌ Binding result has errors");
             return "register-company";
         }
         
         String email = extractEmailFromAuth(auth);
         RegistrationSession session = sessionService.getOrCreateForUser(email);
+        System.out.println("Email: " + email);
+        System.out.println("Session current state: " + session.getCurrentState());
 
-        StateMachine<RegistrationState, RegistrationEvent> sm = stateMachineFactory.getStateMachine();
+        // Use StateMachineManager to handle state machine operations
+        boolean success = stateMachineManager.sendEvent(session, RegistrationEvent.SUBMIT_COMPANY, companyDataDto);
         
-        // Pass data through state machine extended state BEFORE resetting context
-        sm.getExtendedState().getVariables().put("companyData", companyDataDto);
-        sm.getExtendedState().getVariables().put("session", session);
-        
-        sm.getStateMachineAccessor().doWithAllRegions(sma -> sma.resetStateMachine(new org.springframework.statemachine.support.DefaultStateMachineContext<>(session.getCurrentState(), null, null, null)));
-        
-        boolean success = sm.sendEvent(RegistrationEvent.SUBMIT_COMPANY);
         if (!success) {
+            System.err.println("❌ State machine event failed");
             return "register-company"; // Validation failed
         }
-        
-        session.setCurrentState(sm.getState().getId());
-        sessionService.save(session);
 
         return "redirect:/register/complete";
     }
@@ -142,20 +138,12 @@ public class RegistrationController {
     public String skipCompanyStep(Authentication auth) {
         String email = extractEmailFromAuth(auth);
         RegistrationSession session = sessionService.getOrCreateForUser(email);
-        StateMachine<RegistrationState, RegistrationEvent> sm = stateMachineFactory.getStateMachine();
-        sm.getStateMachineAccessor().doWithAllRegions(sma -> sma.resetStateMachine(new org.springframework.statemachine.support.DefaultStateMachineContext<>(session.getCurrentState(), null, null, null)));
-        sm.sendEvent(RegistrationEvent.SKIP_COMPANY);
-        session.setCurrentState(sm.getState().getId());
-        sessionService.save(session);
+        // Use StateMachineManager to handle state machine operations
+        stateMachineManager.sendEvent(session, RegistrationEvent.SKIP_COMPANY, null);
 
         return "redirect:/register/complete";
     }
 
-    @GetMapping("/pending_oauth")
-    public String handlePendingOAuth() {
-        // For pending OAuth state, redirect to the main registration handler
-        return "redirect:/register";
-    }
 
     @GetMapping("/complete")
     public ModelAndView showCompletionPage(Authentication auth) {
