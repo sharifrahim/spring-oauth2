@@ -16,6 +16,14 @@
 '------------------------------------'
         </div>
 
+        <!-- Account Link Success/Error Messages -->
+        <div th:if="${session.accountLinkSuccess}" class="alert-success">
+            > SUCCESS: <span th:text="${session.accountLinkSuccess}"></span>
+        </div>
+        <div th:if="${session.accountLinkError}" class="alert-error">
+            > ERROR: <span th:text="${session.accountLinkError}"></span>
+        </div>
+
         <p>
             > Authenticated User: <span th:text="${username} ?: 'UNKNOWN_USER'"></span>
         </p>

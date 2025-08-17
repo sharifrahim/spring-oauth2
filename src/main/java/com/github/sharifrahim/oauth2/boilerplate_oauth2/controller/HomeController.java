@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.entity.RegistrationSession;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.service.RegistrationSessionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +43,7 @@ public class HomeController {
 	}
 
 	@GetMapping("/dashboard")
-	public ModelAndView dashboard(Authentication authentication) {
+	public ModelAndView dashboard(Authentication authentication, HttpServletRequest request) {
 		
 		
 		  ModelAndView modelAndView = new ModelAndView("dashboard");
@@ -91,6 +93,11 @@ public class HomeController {
 	        modelAndView.addObject("userEmail", email);
 	        modelAndView.addObject("companyData", companyData);
 	        modelAndView.addObject("personalData", personalData);
+	        
+	        // Clear OAuth account linking messages after displaying them
+	        request.getSession().removeAttribute("accountLinkSuccess");
+	        request.getSession().removeAttribute("accountLinkError");
+	        
 	        return modelAndView;
 	}
 

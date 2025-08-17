@@ -55,6 +55,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Account account;
         String targetUrl;
 
+        OAuthProviderType providerType = OAuthProviderType.valueOf(registrationId.toUpperCase());
+        
         if (existingAccountOpt.isEmpty()) {
             // Create new account
             account = new Account();
@@ -64,23 +66,40 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             account.setPendingExpiresAt(Instant.now().plus(7, ChronoUnit.DAYS));
             account = accountService.saveAccount(account);
 
-            // No need to create registration session - just redirect to register
-            targetUrl = "/register";
-        } else {
-            account = existingAccountOpt.get();
-            targetUrl = "/dashboard";
-        }
-
-        // Link OAuth provider (only if not already linked)
-        OAuthProviderType providerType = OAuthProviderType.valueOf(registrationId.toUpperCase());
-        Optional<OAuthProvider> existingProvider = oauthProviderService.findByAccountIdAndProvider(account.getId(), providerType);
-        
-        if (existingProvider.isEmpty()) {
+            // Link the OAuth provider
             OAuthProvider provider = new OAuthProvider();
             provider.setAccount(account);
             provider.setProvider(providerType);
             provider.setProviderUserId(oauthUser.getName());
             oauthProviderService.save(provider);
+
+            targetUrl = "/register";
+        } else {
+            account = existingAccountOpt.get();
+            
+            // Check if this OAuth provider is already linked
+            Optional<OAuthProvider> existingProvider = oauthProviderService.findByAccountIdAndProvider(account.getId(), providerType);
+            
+            if (existingProvider.isEmpty()) {
+                // Link the new OAuth provider to existing account
+                try {
+                    OAuthProvider provider = new OAuthProvider();
+                    provider.setAccount(account);
+                    provider.setProvider(providerType);
+                    provider.setProviderUserId(oauthUser.getName());
+                    oauthProviderService.save(provider);
+                    
+                    // Add success message to session for user feedback
+                    request.getSession().setAttribute("accountLinkSuccess", 
+                        "Your " + providerType.name().toLowerCase() + " account has been successfully linked!");
+                } catch (Exception e) {
+                    // Handle any database constraint violations gracefully
+                    request.getSession().setAttribute("accountLinkError", 
+                        "Unable to link " + providerType.name().toLowerCase() + " account. Please try again.");
+                }
+            }
+            
+            targetUrl = "/dashboard";
         }
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
