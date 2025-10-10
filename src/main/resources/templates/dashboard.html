@@ -25,50 +25,37 @@
         </div>
 
         <p>
-            > Authenticated User: <span th:text="${username} ?: 'UNKNOWN_USER'"></span>
+            > Display Name: <span th:text="${displayName} ?: 'UNSET_PROFILE'"></span>
         </p>
         <p>
             > Email Address: <span th:text="${userEmail} ?: 'UNKNOWN_EMAIL'"></span>
         </p>
         <p>
-            > Session Status: ACTIVE
+            > Account Status: <span th:text="${accountStatus} ?: 'UNKNOWN'"></span>
         </p>
         <p>
             > System Time: <span id="system-time"></span>
         </p>
 
-        <!-- Company Information Section -->
-        <div th:if="${companyData != null}" class="dashboard-section">
-            <h3>COMPANY INFORMATION</h3>
-            <p>
-                > Company Name: <span th:text="${companyData.companyName}"></span>
+        <div th:if="${profile != null}" class="dashboard-section">
+            <h3>PROFILE DATA</h3>
+            <p th:if="${profile.phoneNumber}">
+                > Phone: <span th:text="${profile.phoneNumber}"></span>
+            </p>
+            <p th:if="${profile.company}">
+                > Company: <span th:text="${profile.company}"></span>
             </p>
             <p>
-                > Position: <span th:text="${companyData.position}"></span>
-            </p>
-            <p>
-                > Company Size: <span th:text="${companyData.companySize}"></span>
-            </p>
-            <p th:if="${companyData.industry != null and !#strings.isEmpty(companyData.industry)}">
-                > Industry: <span th:text="${companyData.industry}"></span>
+                <a href="/profile" class="link">[EDIT PROFILE] > UPDATE DETAILS</a>
             </p>
         </div>
 
-        <!-- Personal Information Section -->
-        <div th:if="${personalData != null}" class="dashboard-section">
-            <h3>PERSONAL INFORMATION</h3>
-            <p>
-                > Full Name: <span th:text="${personalData.firstName + ' ' + personalData.lastName}"></span>
-            </p>
-            <p th:if="${personalData.phone != null and !#strings.isEmpty(personalData.phone)}">
-                > Phone: <span th:text="${personalData.phone}"></span>
-            </p>
-            <p>
-                > Date of Birth: <span th:text="${personalData.dateOfBirth}"></span>
-            </p>
+        <div th:if="${profile == null}" class="alert-warning">
+            > PROFILE DATA NOT INITIALIZED :: <a href="/profile" class="link">INITIALIZE NOW</a>
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
+            <a href="/profile" class="btn">[PROFILE] > MODIFY SETTINGS</a>
             <a href="/logout" class="btn">[LOGOUT] > TERMINATE SESSION</a>
             <span class="cursor"></span>
         </div>

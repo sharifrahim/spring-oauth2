@@ -1,7 +1,5 @@
 package com.github.sharifrahim.oauth2.boilerplate_oauth2.model.entity;
 
-import java.time.Instant;
-
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.domain.AccountStatus;
 
 import jakarta.persistence.Column;
@@ -35,12 +33,7 @@ public class Account extends Auditable {
     @Column(nullable = false)
     private String email;
 
-    private String username;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccountStatus status;
-
-    @Column(name = "pending_expires_at")
-    private Instant pendingExpiresAt;
 }

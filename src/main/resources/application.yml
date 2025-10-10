@@ -21,11 +21,8 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-cleanup:
-  pending-accounts:
-    enabled: true
-    schedule: "0 0 2 * * ?" # Every day at 2 AM
-    retention-period-days: 7
+profile:
+  require-completion: false
 security:
   rate-limiting:
     enabled: true

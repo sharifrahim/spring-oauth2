@@ -1,12 +1,13 @@
 package com.github.sharifrahim.oauth2.boilerplate_oauth2.service;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.time.Instant;
-import java.util.Collections;
 import java.util.Optional;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.entity.Account;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.repository.AccountRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class AccountServiceTest {
+class AccountServiceTest {
 
     @Mock
     private AccountRepository accountRepository;
@@ -35,44 +36,26 @@ public class AccountServiceTest {
         account = new Account();
         account.setId(1L);
         account.setEmail("test@example.com");
-        account.setStatus(AccountStatus.PENDING);
-        account.setPendingExpiresAt(Instant.now().minus(1, java.time.temporal.ChronoUnit.DAYS));
+        account.setStatus(AccountStatus.ACTIVE);
     }
 
     @Test
-    void testGetAccountByEmail() {
+    void getAccountByEmail_shouldReturnAccountWhenPresent() {
         when(accountRepository.findByEmail("test@example.com")).thenReturn(Optional.of(account));
+
         Optional<Account> found = accountService.getAccountByEmail("test@example.com");
+
         assertTrue(found.isPresent());
         assertEquals("test@example.com", found.get().getEmail());
     }
 
     @Test
-    void testSaveAccount() {
+    void saveAccount_shouldDelegateToRepository() {
         when(accountRepository.save(any(Account.class))).thenReturn(account);
+
         Account saved = accountService.saveAccount(new Account());
+
         assertNotNull(saved);
-    }
-
-    @Test
-    void testDeleteExpiredPendingAccounts() {
-        when(accountRepository.findByStatusAndPendingExpiresAtBefore(eq(AccountStatus.PENDING), any(Instant.class)))
-            .thenReturn(List.of(account));
-
-        accountService.deleteExpiredPendingAccounts();
-
-        verify(accountRepository, times(1)).findByStatusAndPendingExpiresAtBefore(eq(AccountStatus.PENDING), any(Instant.class));
-        verify(accountRepository, times(1)).deleteAll(anyList());
-    }
-
-    @Test
-    void testDeleteExpiredPendingAccounts_NoExpiredAccounts() {
-        when(accountRepository.findByStatusAndPendingExpiresAtBefore(eq(AccountStatus.PENDING), any(Instant.class)))
-            .thenReturn(Collections.emptyList());
-
-        accountService.deleteExpiredPendingAccounts();
-
-        verify(accountRepository, times(1)).findByStatusAndPendingExpiresAtBefore(eq(AccountStatus.PENDING), any(Instant.class));
-        verify(accountRepository, never()).deleteAll(anyList());
+        verify(accountRepository).save(any(Account.class));
     }
 }

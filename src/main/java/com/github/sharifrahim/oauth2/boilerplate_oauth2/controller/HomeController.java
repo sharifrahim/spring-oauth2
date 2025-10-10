@@ -1,5 +1,7 @@
 package com.github.sharifrahim.oauth2.boilerplate_oauth2.controller;
 
+import java.util.Optional;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Controller;
@@ -8,21 +10,22 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.entity.RegistrationSession;
-import com.github.sharifrahim.oauth2.boilerplate_oauth2.service.RegistrationSessionService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.dto.CompanyDataDto;
-import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.dto.PersonalDataDto;
+import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.domain.AccountStatus;
+import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.entity.Account;
+import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.entity.AccountProfile;
+import com.github.sharifrahim.oauth2.boilerplate_oauth2.service.AccountProfileService;
+import com.github.sharifrahim.oauth2.boilerplate_oauth2.service.AccountService;
+import org.springframework.util.StringUtils;
 
 @Controller
 public class HomeController {
 
-	private final RegistrationSessionService registrationSessionService;
-	private final ObjectMapper objectMapper;
+	private final AccountService accountService;
+    private final AccountProfileService accountProfileService;
 
-	public HomeController(RegistrationSessionService registrationSessionService, ObjectMapper objectMapper) {
-		this.registrationSessionService = registrationSessionService;
-		this.objectMapper = objectMapper;
+	public HomeController(AccountService accountService, AccountProfileService accountProfileService) {
+		this.accountService = accountService;
+        this.accountProfileService = accountProfileService;
 	}
 
 	@GetMapping
@@ -49,50 +52,44 @@ public class HomeController {
 		  ModelAndView modelAndView = new ModelAndView("dashboard");
 
 	        // Initialize variables
-	        String username = null;
+	        String displayName = null;
 	        String email = null;
-	        CompanyDataDto companyData = null;
-	        PersonalDataDto personalData = null;
+	        AccountStatus accountStatus = null;
+	        AccountProfile profile = null;
 
 	        // Check if authentication is not null
-	        if (authentication != null) {
-	            Object principal = authentication.getPrincipal();
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
 
-	            // Extract username and email from DefaultOAuth2User
-	            if (principal instanceof DefaultOAuth2User) {
-	                DefaultOAuth2User oauth2User = (DefaultOAuth2User) principal;
+            // Extract display hints and email from DefaultOAuth2User
+            if (principal instanceof DefaultOAuth2User) {
+                DefaultOAuth2User oauth2User = (DefaultOAuth2User) principal;
 
-	                // Extract the "name" attribute
-	                username = (String) oauth2User.getAttributes().get("name");
-	                
-	                // Extract email
-	                email = (String) oauth2User.getAttributes().get("email");
-	                
-	                // Try to get registration session data
-	                try {
-	                    RegistrationSession session = registrationSessionService.getOrCreateForUser(email);
-	                    
-	                    // Parse company data if available
-	                    if (session.getCompanyData() != null && !session.getCompanyData().isEmpty()) {
-	                        companyData = objectMapper.readValue(session.getCompanyData(), CompanyDataDto.class);
-	                    }
-	                    
-	                    // Parse personal data if available
-	                    if (session.getPersonalData() != null && !session.getPersonalData().isEmpty()) {
-	                        personalData = objectMapper.readValue(session.getPersonalData(), PersonalDataDto.class);
-	                    }
-	                } catch (Exception e) {
-	                    // Log error but don't break the dashboard
-	                    System.err.println("Error retrieving registration data: " + e.getMessage());
-	                }
-	            }
-	        }
+                String oauthName = (String) oauth2User.getAttributes().get("name");
+                email = (String) oauth2User.getAttributes().get("email");
+
+                if (email != null) {
+                    Optional<Account> accountOpt = accountService.getAccountByEmail(email);
+                    if (accountOpt.isPresent()) {
+                        Account account = accountOpt.get();
+                        accountStatus = account.getStatus();
+                        profile = accountProfileService.findByAccountId(account.getId()).orElse(null);
+                    }
+                }
+
+                if (profile != null && StringUtils.hasText(profile.getDisplayName())) {
+                    displayName = profile.getDisplayName();
+                } else {
+                    displayName = oauthName;
+                }
+            }
+        }
 
 	        // Add all data to the model
-	        modelAndView.addObject("username", username);
+	        modelAndView.addObject("displayName", displayName);
 	        modelAndView.addObject("userEmail", email);
-	        modelAndView.addObject("companyData", companyData);
-	        modelAndView.addObject("personalData", personalData);
+	        modelAndView.addObject("accountStatus", accountStatus);
+            modelAndView.addObject("profile", profile);
 	        
 	        // Clear OAuth account linking messages after displaying them
 	        request.getSession().removeAttribute("accountLinkSuccess");

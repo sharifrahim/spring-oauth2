@@ -1,14 +1,13 @@
 # Spring Boot OAuth2 Identity Module - Retro Terminal Edition
 
-This project transforms a basic Spring Boot OAuth2 demo into a full-featured, production-ready identity management system with a unique retro terminal UI. It provides a complete foundation for handling user accounts, authentication, multi-step registration, and security features like rate limiting.
+This project transforms a basic Spring Boot OAuth2 demo into a production-ready identity module with a unique retro terminal UI. It provides a solid foundation for handling user accounts, authentication, account status tracking, and security features like rate limiting.
 
 ## Features
 
 - **OAuth2 Authentication**: Secure login with GitHub and Google.
-- **Complete Account Lifecycle**: Manages user accounts from creation to cleanup.
-- **Multi-Step Registration**: A customizable, state machine-driven registration flow for new users.
-- **Rate Limiting**: Protects against brute-force attacks by limiting login and registration attempts.
-- **Scheduled Cleanup**: Automatically deletes abandoned, pending accounts to maintain database hygiene.
+- **Account Status Tracking**: Each OAuth sign-in provisions or reuses an `Account` with an `ACTIVE`/`SUSPENDED` status flag.
+- **Profile Management**: Optional one-to-one `AccountProfile` records capture display name, phone, and company details.
+- **Rate Limiting**: Protects against brute-force attacks by limiting login attempts.
 - **Customizable Error Handling**: A full suite of themed error pages for a consistent user experience.
 - **Unique Retro UI**: A nostalgic terminal/DOS-style user interface built with custom CSS.
 
@@ -61,10 +60,8 @@ You can customize the application's behavior in `src/main/resources/application.
   - `security.rate-limiting.ip-max-attempts`: Max failed attempts per IP.
   - `security.rate-limiting.email-max-attempts`: Max failed attempts per email.
   - `security.rate-limiting.block-duration-in-minutes`: How long an IP is blocked.
-
-- **Account Cleanup**:
-  - `cleanup.pending-accounts.enabled`: `true` or `false`.
-  - `cleanup.pending-accounts.schedule`: Cron expression for the cleanup job (default is 2 AM daily).
+- **Profile Enforcement**:
+  - `profile.require-completion`: When `true`, users are redirected to `/profile` after OAuth login until a display name is provided.
 
 ## Running the Application
 
@@ -94,9 +91,9 @@ This application uses an in-memory H2 database for development. You can inspect 
 
 The application creates several tables to manage the OAuth2 identity system:
 
-- **`ACCOUNT`**: User accounts with email, username, status, and timestamps
+- **`ACCOUNT`**: User accounts with email, status, and timestamps
+- **`ACCOUNT_PROFILE`**: Optional profile metadata (display name, phone number, company)
 - **`OAUTH_PROVIDER`**: Links accounts to OAuth providers (Google, GitHub)
-- **`REGISTRATION_SESSION`**: Tracks multi-step registration progress and state
 - **`LOGIN_ATTEMPT`**: Rate limiting and security audit trail
 
 ### Viewing OAuth Data
@@ -108,14 +105,10 @@ After completing an OAuth login flow, you can run these SQL queries in the H2 Co
 SELECT * FROM ACCOUNT;
 
 -- View OAuth provider connections (GitHub, Google)
-SELECT a.EMAIL, a.USERNAME, op.PROVIDER, op.PROVIDER_USER_ID 
+SELECT a.EMAIL, p.DISPLAY_NAME, op.PROVIDER, op.PROVIDER_USER_ID 
 FROM ACCOUNT a 
+LEFT JOIN ACCOUNT_PROFILE p ON a.ID = p.ACCOUNT_ID
 JOIN OAUTH_PROVIDER op ON a.ID = op.ACCOUNT_ID;
-
--- View registration sessions
-SELECT a.EMAIL, rs.CURRENT_STATE, rs.SESSION_TOKEN, rs.EXPIRES_AT
-FROM ACCOUNT a 
-JOIN REGISTRATION_SESSION rs ON a.ID = rs.ACCOUNT_ID;
 
 -- View login attempts and rate limiting
 SELECT * FROM LOGIN_ATTEMPT ORDER BY CREATED_AT DESC;
