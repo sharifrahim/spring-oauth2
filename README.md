@@ -4,7 +4,7 @@ This project transforms a basic Spring Boot OAuth2 demo into a production-ready 
 
 ## Features
 
-- **OAuth2 Authentication**: Secure login with GitHub and Google.
+- **OAuth2 Authentication**: Secure login with Google.
 - **Account Status Tracking**: Each OAuth sign-in provisions or reuses an `Account` with an `ACTIVE`/`SUSPENDED` status flag.
 - **Profile Management**: Optional one-to-one `AccountProfile` records capture display name, phone, and company details.
 - **Rate Limiting**: Protects against brute-force attacks by limiting login attempts.
@@ -28,27 +28,19 @@ This project uses environment variables to handle sensitive OAuth2 credentials. 
 
 ```bash
 # .env.example
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
 ### 2. Getting OAuth2 Credentials
 
-You will need to create an OAuth2 application for each provider you want to support.
+You will need to create an OAuth2 application for Google:
 
-- **GitHub**:
-  1. Go to `Settings > Developer settings > OAuth Apps`.
-  2. Create a new OAuth App.
-  3. Set the `Authorization callback URL` to `http://localhost:8080/login/oauth2/code/github`.
-
-- **Google**:
-  1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
-  2. Create a new project and go to `APIs & Services > Credentials`.
-  3. Create an `OAuth 2.0 Client ID`.
-  4. Add `http://localhost:8080` to `Authorized JavaScript origins`.
-  5. Add `http://localhost:8080/login/oauth2/code/google` to `Authorized redirect URIs`.
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project and go to `APIs & Services > Credentials`.
+3. Create an `OAuth 2.0 Client ID`.
+4. Add `http://localhost:8080` to `Authorized JavaScript origins`.
+5. Add `http://localhost:8080/login/oauth2/code/google` to `Authorized redirect URIs`.
 
 
 ### 3. Configuration Options
@@ -93,7 +85,7 @@ The application creates several tables to manage the OAuth2 identity system:
 
 - **`ACCOUNT`**: User accounts with email, status, and timestamps
 - **`ACCOUNT_PROFILE`**: Optional profile metadata (display name, phone number, company)
-- **`OAUTH_PROVIDER`**: Links accounts to OAuth providers (Google, GitHub)
+- **`OAUTH_PROVIDER`**: Links accounts to OAuth providers (Google)
 - **`LOGIN_ATTEMPT`**: Rate limiting and security audit trail
 
 ### Viewing OAuth Data
@@ -104,7 +96,7 @@ After completing an OAuth login flow, you can run these SQL queries in the H2 Co
 -- View all accounts
 SELECT * FROM ACCOUNT;
 
--- View OAuth provider connections (GitHub, Google)
+-- View OAuth provider connections (Google)
 SELECT a.EMAIL, p.DISPLAY_NAME, op.PROVIDER, op.PROVIDER_USER_ID 
 FROM ACCOUNT a 
 LEFT JOIN ACCOUNT_PROFILE p ON a.ID = p.ACCOUNT_ID

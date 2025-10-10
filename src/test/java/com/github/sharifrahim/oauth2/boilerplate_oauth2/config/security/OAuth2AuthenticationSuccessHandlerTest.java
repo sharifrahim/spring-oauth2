@@ -99,7 +99,7 @@ class OAuth2AuthenticationSuccessHandlerTest {
         existingAccount.setStatus(AccountStatus.ACTIVE);
 
         when(authenticationToken.getPrincipal()).thenReturn(oauthUser);
-        when(authenticationToken.getAuthorizedClientRegistrationId()).thenReturn("github");
+        when(authenticationToken.getAuthorizedClientRegistrationId()).thenReturn("google");
         when(accountService.getAccountByEmail(email)).thenReturn(Optional.of(existingAccount));
         when(oauthProviderService.findByAccountIdAndProvider(eq(7L), any())).thenReturn(Optional.of(new OAuthProvider()));
         when(profileProperties.isRequireCompletion()).thenReturn(true);
@@ -127,7 +127,7 @@ class OAuth2AuthenticationSuccessHandlerTest {
         existingAccount.setStatus(AccountStatus.ACTIVE);
 
         when(authenticationToken.getPrincipal()).thenReturn(oauthUser);
-        when(authenticationToken.getAuthorizedClientRegistrationId()).thenReturn("github");
+        when(authenticationToken.getAuthorizedClientRegistrationId()).thenReturn("google");
         when(accountService.getAccountByEmail(email)).thenReturn(Optional.of(existingAccount));
         when(oauthProviderService.findByAccountIdAndProvider(eq(8L), any())).thenReturn(Optional.empty());
         when(profileProperties.isRequireCompletion()).thenReturn(true);
