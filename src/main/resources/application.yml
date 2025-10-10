@@ -1,16 +1,15 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/oauth2}
+    username: ${SPRING_DATASOURCE_USERNAME:oauth2}
+    password: ${SPRING_DATASOURCE_PASSWORD:oauth2}
+    driver-class-name: org.postgresql.Driver
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
-  h2:
-    console:
-      enabled: ${H2_CONSOLE_ENABLED:false}
+      ddl-auto: none
   security:
     oauth2:
       client:
@@ -21,8 +20,6 @@ spring:
 profile:
   require-completion: false
 security:
-  web:
-    allow-h2-console: ${ALLOW_H2_CONSOLE:false}
   rate-limiting:
     enabled: true
     ip-max-attempts: 10

@@ -2,10 +2,7 @@ spring:
   config:
     activate:
       on-profile: dev
-  h2:
-    console:
-      enabled: true
-
-security:
-  web:
-    allow-h2-console: true
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/oauth2_dev}
+    username: ${SPRING_DATASOURCE_USERNAME:oauth2_dev}
+    password: ${SPRING_DATASOURCE_PASSWORD:oauth2_dev}

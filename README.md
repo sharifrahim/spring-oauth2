@@ -24,10 +24,13 @@ The entire frontend has been rebuilt from the ground up to mimic the look and fe
 
 ### 1. Environment Variables
 
-This project uses environment variables to handle sensitive OAuth2 credentials. Create a `.env` file in the project root (or set the variables in your deployment environment). You can use the `.env.example` file as a template.
+This project uses environment variables to handle sensitive credentials. Create a `.env` file in the project root (or set the variables in your deployment environment). You can use the `.env.example` file as a template.
 
 ```bash
 # .env.example
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/oauth2
+SPRING_DATASOURCE_USERNAME=oauth2
+SPRING_DATASOURCE_PASSWORD=oauth2
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
@@ -67,48 +70,29 @@ The application will be available at `http://localhost:8080`.
 
 ## Database Inspection
 
-This application uses an in-memory H2 database for development. You can inspect the data created during OAuth registration and user flows using the H2 Console.
+This application uses PostgreSQL backed by Flyway migrations. You can run a Postgres instance locally with Docker:
 
-### Accessing H2 Console
-
-1. **Start the application**: `mvn spring-boot:run`
-2. **Open H2 Console**: Navigate to `http://localhost:8080/h2-console`
-3. **Connection Details**:
-   - **JDBC URL**: `jdbc:h2:mem:testdb`
-   - **Username**: `sa`
-   - **Password**: (leave empty)
-   - **Driver Class**: `org.h2.Driver`
-
-### Database Tables
-
-The application creates several tables to manage the OAuth2 identity system:
-
-- **`ACCOUNT`**: User accounts with email, status, and timestamps
-- **`ACCOUNT_PROFILE`**: Optional profile metadata (display name, phone number, company)
-- **`OAUTH_PROVIDER`**: Links accounts to OAuth providers (Google)
-- **`LOGIN_ATTEMPT`**: Rate limiting and security audit trail
-
-### Viewing OAuth Data
-
-After completing an OAuth login flow, you can run these SQL queries in the H2 Console:
-
-```sql
--- View all accounts
-SELECT * FROM ACCOUNT;
-
--- View OAuth provider connections (Google)
-SELECT a.EMAIL, p.DISPLAY_NAME, op.PROVIDER, op.PROVIDER_USER_ID 
-FROM ACCOUNT a 
-LEFT JOIN ACCOUNT_PROFILE p ON a.ID = p.ACCOUNT_ID
-JOIN OAUTH_PROVIDER op ON a.ID = op.ACCOUNT_ID;
-
--- View login attempts and rate limiting
-SELECT * FROM LOGIN_ATTEMPT ORDER BY CREATED_AT DESC;
+```bash
+docker run --rm -d \
+  --name oauth2-db \
+  -e POSTGRES_DB=oauth2 \
+  -e POSTGRES_USER=oauth2 \
+  -e POSTGRES_PASSWORD=oauth2 \
+  -p 5432:5432 \
+  postgres:16-alpine
 ```
 
-### Environment Variables for H2 Console
+Once the service is up:
 
-You can control H2 Console access via environment variables:
+```bash
+psql "postgresql://oauth2:oauth2@localhost:5432/oauth2"
+```
 
-- **`H2_CONSOLE_ENABLED`**: Set to `true` to enable, `false` to disable (default: `true`)
-- **`SECURITY_LOG_LEVEL`**: Set logging level for security events (`INFO`, `DEBUG`, `TRACE`)
+Useful tables:
+
+- `accounts`: user accounts with status flags.
+- `account_profiles`: optional profile metadata.
+- `oauth_providers`: linked OAuth providers.
+- `login_attempts`: rate limiting audit trail.
+
+Flyway migrations live in `src/main/resources/db/migration`. Add new schema changes as incremental `V__` scripts and Flyway will run them automatically on startup.
