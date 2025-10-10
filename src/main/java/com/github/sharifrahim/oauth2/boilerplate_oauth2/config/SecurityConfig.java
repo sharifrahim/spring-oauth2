@@ -7,8 +7,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.github.sharifrahim.oauth2.boilerplate_oauth2.config.security.OAuth2AuthenticationFailureHandler;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.config.security.OAuth2AuthenticationSuccessHandler;
+import com.github.sharifrahim.oauth2.boilerplate_oauth2.config.security.OAuth2AuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -17,47 +17,60 @@ public class SecurityConfig {
     private final RateLimitFilter rateLimitFilter;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final SecurityProperties securityProperties;
 
-    public SecurityConfig(RateLimitFilter rateLimitFilter, OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler, OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
+    public SecurityConfig(
+            RateLimitFilter rateLimitFilter,
+            OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
+            OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler,
+            SecurityProperties securityProperties) {
         this.rateLimitFilter = rateLimitFilter;
         this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
         this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
+        this.securityProperties = securityProperties;
     }
 
     @Bean
     SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http) throws Exception {
-        
-    	http
-        .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
-        .authorizeHttpRequests(a -> 
-            a.requestMatchers("/", "/error","/login","/logout", "/oauth-error", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/h2-console/**").permitAll()
-             .anyRequest().authenticated()
-        )
-        .exceptionHandling(e -> 
-        	e.authenticationEntryPoint((request, response, authException) -> 
-        	response.sendRedirect("/login"))
-        )
-        .csrf(csrf -> csrf
-            .ignoringRequestMatchers("/h2-console/**")
-            .disable())
-        //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-        .logout(l -> l
-                .logoutUrl("/logout") // URL for logging out
-                .logoutSuccessUrl("/") // Redirect to home page after logout
-                .invalidateHttpSession(true) // Invalidate the session
-                .deleteCookies("JSESSIONID") // Delete cookies
-                .permitAll() // Allow everyone to access /logout
-            )
-        .oauth2Login(o -> o
-        		.loginPage("/login")
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailureHandler)
-            )
-        .headers(headers -> headers.frameOptions().sameOrigin());
+        boolean allowH2Console = securityProperties.isAllowH2Console();
 
-    return http.build();
-    
+        String[] publicEndpoints = allowH2Console
+                ? new String[]{"/", "/error", "/login", "/logout", "/oauth-error", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/h2-console/**"}
+                : new String[]{"/", "/error", "/login", "/logout", "/oauth-error", "/css/**", "/js/**", "/images/**", "/favicon.ico"};
+
+        http
+            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers(publicEndpoints).permitAll()
+                    .anyRequest().authenticated()
+            )
+            .exceptionHandling(exceptionHandling ->
+                    exceptionHandling.authenticationEntryPoint((request, response, authException) ->
+                            response.sendRedirect("/login"))
+            )
+            .csrf(csrf -> {
+                if (allowH2Console) {
+                    csrf.ignoringRequestMatchers("/h2-console/**");
+                }
+            })
+            .logout(logout -> logout
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+                    .permitAll()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                    .loginPage("/login")
+                    .successHandler(oAuth2AuthenticationSuccessHandler)
+                    .failureHandler(oAuth2AuthenticationFailureHandler)
+            )
+            .headers(headers -> {
+                if (allowH2Console) {
+                    headers.frameOptions(frameOptions -> frameOptions.sameOrigin());
+                }
+            });
+
+        return http.build();
     }
 }
-
-

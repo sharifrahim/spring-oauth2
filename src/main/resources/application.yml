@@ -10,7 +10,7 @@ spring:
       ddl-auto: update
   h2:
     console:
-      enabled: ${H2_CONSOLE_ENABLED:true}
+      enabled: ${H2_CONSOLE_ENABLED:false}
   security:
     oauth2:
       client:
@@ -21,6 +21,8 @@ spring:
 profile:
   require-completion: false
 security:
+  web:
+    allow-h2-console: ${ALLOW_H2_CONSOLE:false}
   rate-limiting:
     enabled: true
     ip-max-attempts: 10
