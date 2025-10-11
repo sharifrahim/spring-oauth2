@@ -57,8 +57,12 @@ public class SecurityConfig {
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/")
                     .invalidateHttpSession(true)
+                    .clearAuthentication(true)
                     .deleteCookies("JSESSIONID")
                     .permitAll()
+            )
+            .headers(headers -> headers
+                    .cacheControl(cache -> cache.disable())
             )
             .oauth2Login(oauth2 -> oauth2
                     .loginPage("/login")

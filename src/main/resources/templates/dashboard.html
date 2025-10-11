@@ -3,67 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM DASHBOARD</title>
+    <title>Dashboard</title>
     <link href="/css/retro.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>SYSTEM STATUS :: DASHBOARD</h1>
+    <div class="container" style="max-width: 600px;">
+        <h1>Dashboard</h1>
 
-        <div class="ascii-art">
-.------------------------------------.
-|       *** ACCESS GRANTED ***       |
-'------------------------------------'
-        </div>
-
-        <!-- Account Link Success/Error Messages -->
         <div th:if="${session.accountLinkSuccess}" class="alert-success">
-            > SUCCESS: <span th:text="${session.accountLinkSuccess}"></span>
+            <span th:text="${session.accountLinkSuccess}"></span>
         </div>
         <div th:if="${session.accountLinkError}" class="alert-error">
-            > ERROR: <span th:text="${session.accountLinkError}"></span>
+            <span th:text="${session.accountLinkError}"></span>
         </div>
 
-        <p>
-            > Display Name: <span th:text="${displayName} ?: 'UNSET_PROFILE'"></span>
-        </p>
-        <p>
-            > Email Address: <span th:text="${userEmail} ?: 'UNKNOWN_EMAIL'"></span>
-        </p>
-        <p>
-            > Account Status: <span th:text="${accountStatus} ?: 'UNKNOWN'"></span>
-        </p>
-        <p>
-            > System Time: <span id="system-time"></span>
-        </p>
+        <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 24px;">
+            <p style="margin: 8px 0; color: #374151;">
+                <strong>Name:</strong> <span th:text="${displayName} ?: 'Not set'"></span>
+            </p>
+            <p style="margin: 8px 0; color: #374151;">
+                <strong>Email:</strong> <span th:text="${userEmail} ?: 'Unknown'"></span>
+            </p>
+            <p style="margin: 8px 0; color: #374151;">
+                <strong>Status:</strong> <span th:text="${accountStatus} ?: 'Unknown'"></span>
+            </p>
+            <p style="margin: 8px 0; color: #374151;">
+                <strong>Time:</strong> <span id="system-time"></span>
+            </p>
+        </div>
 
         <div th:if="${profile != null}" class="dashboard-section">
-            <h3>PROFILE DATA</h3>
+            <h3>Profile Information</h3>
             <p th:if="${profile.phoneNumber}">
-                > Phone: <span th:text="${profile.phoneNumber}"></span>
+                <strong>Phone:</strong> <span th:text="${profile.phoneNumber}"></span>
             </p>
             <p th:if="${profile.company}">
-                > Company: <span th:text="${profile.company}"></span>
-            </p>
-            <p>
-                <a href="/profile" class="link">[EDIT PROFILE] > UPDATE DETAILS</a>
+                <strong>Company:</strong> <span th:text="${profile.company}"></span>
             </p>
         </div>
 
         <div th:if="${profile == null}" class="alert-warning">
-            > PROFILE DATA NOT INITIALIZED :: <a href="/profile" class="link">INITIALIZE NOW</a>
+            Your profile is incomplete. <a href="/profile" class="link">Complete your profile</a>
         </div>
 
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="/profile" class="btn">[PROFILE] > MODIFY SETTINGS</a>
-            <a href="/logout" class="btn">[LOGOUT] > TERMINATE SESSION</a>
-            <span class="cursor"></span>
+        <div style="margin-top: 32px;">
+            <a href="/profile" class="btn">Edit Profile</a>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="btn" style="background: #6b7280;">Sign Out</button>
+            </form>
         </div>
     </div>
 
     <script>
         function updateTime() {
-            document.getElementById('system-time').innerText = new Date().toUTCString();
+            document.getElementById('system-time').innerText = new Date().toLocaleString();
         }
         setInterval(updateTime, 1000);
         updateTime();
