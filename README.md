@@ -67,10 +67,18 @@ mvn spring-boot:run
 ```
 
 The application will be available at `http://localhost:8080`.
-Actuator endpoints for monitoring:
-- `/actuator/health/liveness`
-- `/actuator/health/readiness`
-- `/actuator/info`
+
+## Observability
+
+- Actuator is enabled; health probes are publicly readable while other endpoints require authentication.
+  - `/actuator/health/liveness`
+  - `/actuator/health/readiness`
+  - `/actuator/info`
+  - `/actuator/metrics/**` and `/actuator/prometheus` (for Prometheus scrapes)
+- Structured JSON logs (Logback + logstash encoder) automatically include level, logger, thread, app name, and MDC context when the `prod` profile is active.
+- Auth rate limiting metrics are emitted via Micrometer counters:
+  - `auth.oauth.attempts` tagged by `type` and `status`
+  - `auth.oauth.blocks` tagged by `type`
 
 ## Database Inspection
 

@@ -3,6 +3,8 @@ package com.github.sharifrahim.oauth2.boilerplate_oauth2.config.security;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -31,6 +33,8 @@ import jakarta.servlet.http.HttpSession;
 
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(OAuth2AuthenticationSuccessHandler.class);
 
     private final RateLimitService rateLimitService;
     private final AccountService accountService;
@@ -68,12 +72,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             account.setEmail(email);
             account.setStatus(AccountStatus.ACTIVE);
             account = accountService.saveAccount(account);
+            log.info("Created new account for email={}", email);
 
             OAuthProvider provider = new OAuthProvider();
             provider.setAccount(account);
             provider.setProvider(providerType);
             provider.setProviderUserId(oauthUser.getName());
             oauthProviderService.save(provider);
+            log.info("Linked provider={} to new account id={}", providerType, account.getId());
         } else {
             account = existingAccountOpt.get();
 
@@ -96,10 +102,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     // Add success message to session for user feedback
                     request.getSession().setAttribute("accountLinkSuccess", 
                         "Your " + providerType.name().toLowerCase() + " account has been successfully linked!");
+                    log.info("Linked provider={} to existing account id={}", providerType, account.getId());
                 } catch (Exception e) {
                     // Handle any database constraint violations gracefully
                     request.getSession().setAttribute("accountLinkError", 
                         "Unable to link " + providerType.name().toLowerCase() + " account. Please try again.");
+                    log.warn("Failed linking provider={} to account id={}: {}", providerType, account.getId(), e.getMessage());
                 }
             }
         }
@@ -120,6 +128,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         rateLimitService.recordAttempt(request, email, AttemptType.OAUTH_START, AttemptStatus.SUCCESS);
+        log.info("OAuth success for account id={} provider={} redirect={}", account.getId(), providerType, targetUrl);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
@@ -130,6 +139,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         if (session != null) {
             session.invalidate();
         }
+        log.warn("Blocked login attempt for suspended account email={}", email);
         throw new AccountSuspendedException("Account is suspended.");
     }
 }

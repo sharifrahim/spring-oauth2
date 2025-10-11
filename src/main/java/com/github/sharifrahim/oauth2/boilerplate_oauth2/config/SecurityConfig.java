@@ -29,7 +29,19 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http) throws Exception {
-        String[] publicEndpoints = {"/", "/error", "/login", "/logout", "/oauth-error", "/css/**", "/js/**", "/images/**", "/favicon.ico"};
+        String[] publicEndpoints = {
+                "/",
+                "/error",
+                "/login",
+                "/logout",
+                "/oauth-error",
+                "/css/**",
+                "/js/**",
+                "/images/**",
+                "/favicon.ico",
+                "/actuator/health",
+                "/actuator/health/**"
+        };
 
         http
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)

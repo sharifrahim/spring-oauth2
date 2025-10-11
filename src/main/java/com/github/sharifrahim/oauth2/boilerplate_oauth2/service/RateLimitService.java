@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.domain.AttemptStatus;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.domain.AttemptType;
 import com.github.sharifrahim.oauth2.boilerplate_oauth2.model.entity.LoginAttempt;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class RateLimitService {
 
     private final LoginAttemptRepository loginAttemptRepository;
+    private final MeterRegistry meterRegistry;
 
     @Value("${security.rate-limiting.enabled:true}")
     private boolean enabled;
@@ -34,8 +36,9 @@ public class RateLimitService {
     private int blockDurationInMinutes;
 
 
-    public RateLimitService(LoginAttemptRepository loginAttemptRepository) {
+    public RateLimitService(LoginAttemptRepository loginAttemptRepository, MeterRegistry meterRegistry) {
         this.loginAttemptRepository = loginAttemptRepository;
+        this.meterRegistry = meterRegistry;
     }
 
     public boolean isBlocked(String ipAddress) {
@@ -66,6 +69,7 @@ public class RateLimitService {
         attempt.setUserAgent(request.getHeader("User-Agent"));
 
         Instant now = Instant.now();
+        recordAttemptMetric(type, status);
 
         if (status == AttemptStatus.FAILED) {
             Instant since = now.minus(timeWindowInMinutes, ChronoUnit.MINUTES);
@@ -98,6 +102,7 @@ public class RateLimitService {
         blockAttempt.setUserAgent(request.getHeader("User-Agent"));
         blockAttempt.setExpiresAt(Instant.now().plus(blockDurationInMinutes, ChronoUnit.MINUTES));
         loginAttemptRepository.save(blockAttempt);
+        meterRegistry.counter("auth.oauth.blocks", "type", type.name().toLowerCase()).increment();
     }
 
     private String getClientIP(HttpServletRequest request) {
@@ -106,5 +111,12 @@ public class RateLimitService {
             return request.getRemoteAddr();
         }
         return xfHeader.split(",")[0];
+    }
+
+    private void recordAttemptMetric(AttemptType type, AttemptStatus status) {
+        meterRegistry.counter("auth.oauth.attempts",
+                "type", type.name().toLowerCase(),
+                "status", status.name().toLowerCase())
+            .increment();
     }
 }

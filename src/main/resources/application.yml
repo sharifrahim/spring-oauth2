@@ -34,10 +34,15 @@ management:
     health:
       probes:
         enabled: true
+    prometheus:
+      enabled: true
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics,prometheus
   health:
     defaults:
       enabled: false
+  metrics:
+    tags:
+      application: ${spring.application.name:boilerplate-oauth2}
