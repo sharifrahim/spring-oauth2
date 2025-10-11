@@ -55,9 +55,7 @@ public class RateLimitService {
 
         String ipAddress = getClientIP(request);
 
-        // Check if IP is already blocked
         if (isBlocked(ipAddress)) {
-            // Optionally log that a blocked IP is still trying to attempt actions
             return;
         }
 
@@ -83,14 +81,13 @@ public class RateLimitService {
             if (email != null) {
                 long emailFailures = loginAttemptRepository.countByEmailAndStatusFailedSince(email, since);
                 if (emailFailures + 1 >= emailMaxAttempts) {
-                    blockIp(request, type); // Block the IP associated with the email
+                    blockIp(request, type);
                     return;
                 }
             }
         }
 
-        // For SUCCESS or FAILED attempts that don't trigger a block
-        attempt.setExpiresAt(now.plus(1, ChronoUnit.DAYS)); // Record expires after 1 day
+        attempt.setExpiresAt(now.plus(1, ChronoUnit.DAYS));
         loginAttemptRepository.save(attempt);
     }
 
