@@ -67,6 +67,10 @@ mvn spring-boot:run
 ```
 
 The application will be available at `http://localhost:8080`.
+Actuator endpoints for monitoring:
+- `/actuator/health/liveness`
+- `/actuator/health/readiness`
+- `/actuator/info`
 
 ## Database Inspection
 
