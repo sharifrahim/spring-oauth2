@@ -35,14 +35,10 @@ public class HomeController {
 
 	@GetMapping("/login")
 	public ModelAndView login(Authentication authentication) {
-
-		// Check if the user is already authenticated
 		if (authentication != null && authentication.isAuthenticated()) {
-			// Redirect to the home page if already logged in
-			return new ModelAndView("redirect:/");
+			return new ModelAndView("redirect:/dashboard");
 		}
-		// Otherwise, show the login page
-		return new ModelAndView("login"); // Render the login.html template
+		return new ModelAndView("login");
 	}
 
 	@GetMapping("/dashboard")
