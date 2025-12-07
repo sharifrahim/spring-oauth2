@@ -1,6 +1,5 @@
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useMe, useUpdateProfile } from "../api/hooks";
 import Panel from "../components/Panel";
 
@@ -28,20 +27,8 @@ function Profile() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/logout", { method: "POST", credentials: "include" });
-    } finally {
-      window.location.href = "/";
-    }
-  };
-
   if (isLoading) {
-    return (
-      <Panel title="Loading profile">
-        <p className="text-sm text-slate-300">Pulling your profile from the BFF…</p>
-      </Panel>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (error) {
@@ -73,6 +60,8 @@ function Profile() {
     { label: "Display name", value: displayName || "Not set" },
     { label: "Phone number", value: phoneNumber || "Not set" },
     { label: "Company", value: company || "Not set" },
+    { label: "Email", value: data.email },
+    { label: "Status", value: data.status === "ACTIVE" ? "Active" : "Suspended" },
   ];
 
   return (
@@ -80,53 +69,51 @@ function Profile() {
       title="Profile details"
       description="Stored server-side; cookies stay in the browser and never expose tokens."
       actions={
-        mode === "view" ? (
-          <div className="flex gap-2">
-            <button
-              onClick={() => setMode("edit")}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-800 transition hover:border-slate-500"
-            >
-              Edit
-            </button>
-            <button
-              onClick={handleLogout}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-800 transition hover:border-slate-500"
-            >
-              Logout
-            </button>
-          </div>
-        ) : updateProfile.isSuccess ? (
-          <span className="rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
-            Saved
-          </span>
-        ) : null
-      }
-    >
+        mode === "view"
+          ? null
+          : updateProfile.isSuccess
+            ? (
+              <span className="rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+                Saved
+              </span>
+            )
+            : null
+    }
+  >
       {mode === "view" ? (
-        <div className="grid gap-4">
-          {profileFields.map((field) => (
-            <div
-              key={field.label}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 flex items-center justify-between"
-            >
-              <span className="text-xs font-mono uppercase tracking-wide text-slate-500">{field.label}</span>
-              <span className="text-sm font-semibold text-slate-900">{field.value}</span>
+        <div className="grid gap-3">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Account</p>
+            <p className="mt-1 text-base font-semibold text-slate-900">{data.email}</p>
+            <div className="mt-2 flex flex-wrap gap-2 text-xs">
+              <span className="rounded-full bg-accent/10 px-3 py-1 font-semibold text-accent">Session active</span>
+              <span className="rounded-full bg-slate-900 px-3 py-1 font-semibold text-white">
+                {data.status === "ACTIVE" ? "Active" : "Suspended"}
+              </span>
             </div>
-          ))}
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => setMode("edit")}
-              className="rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow"
-            >
-              Edit profile
-            </button>
-            <Link
-              to="/app"
-              className="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-500"
-            >
-              Back to console
-            </Link>
           </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Profile fields</p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              {profileFields.map((field) => (
+                <div
+                  key={field.label}
+                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">{field.label}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900">{field.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={() => setMode("edit")}
+            className="w-fit rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow"
+          >
+            Edit profile
+          </button>
         </div>
       ) : (
         <form className="grid gap-4" onSubmit={onSubmit}>
@@ -179,19 +166,6 @@ function Profile() {
             >
               Cancel
             </button>
-            <Link
-              to="/app"
-              className="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-500"
-            >
-              Back to console
-            </Link>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-500"
-            >
-              Logout
-            </button>
           </div>
         </form>
       )}
@@ -207,6 +181,21 @@ function Field({ label, required, children }: { label: string; required?: boolea
       </span>
       {children}
     </label>
+  );
+}
+
+function ProfileSkeleton() {
+  return (
+    <Panel title="Loading profile">
+      <div className="grid gap-3 md:grid-cols-2">
+        {[...Array(4)].map((_, index) => (
+          <div key={index} className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <div className="h-3 w-24 rounded bg-slate-200 animate-pulse" />
+            <div className="mt-2 h-4 w-32 rounded bg-slate-200 animate-pulse" />
+          </div>
+        ))}
+      </div>
+    </Panel>
   );
 }
 
