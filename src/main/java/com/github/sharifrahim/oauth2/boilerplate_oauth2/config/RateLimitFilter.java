@@ -3,6 +3,7 @@ package com.github.sharifrahim.oauth2.boilerplate_oauth2.config;
 import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -29,7 +30,10 @@ public class RateLimitFilter extends OncePerRequestFilter {
         String ipAddress = getClientIP(request);
         if (rateLimitService.isBlocked(ipAddress)) {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-            response.getWriter().write("You have been blocked due to too many failed attempts.");
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write("""
+                    {"code":"rate_limited","message":"You have been blocked due to too many failed attempts."}
+                    """);
             return;
         }
 

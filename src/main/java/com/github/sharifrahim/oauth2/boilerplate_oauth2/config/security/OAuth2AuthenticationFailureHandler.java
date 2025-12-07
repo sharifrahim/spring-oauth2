@@ -21,10 +21,11 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
     private static final Logger log = LoggerFactory.getLogger(OAuth2AuthenticationFailureHandler.class);
 
     private final RateLimitService rateLimitService;
+    private static final String SPA_BASE_URL = "http://localhost:5173";
 
     public OAuth2AuthenticationFailureHandler(RateLimitService rateLimitService) {
         this.rateLimitService = rateLimitService;
-        setDefaultFailureUrl("/oauth-error");
+        setDefaultFailureUrl(SPA_BASE_URL + "/login-error");
     }
 
     @Override

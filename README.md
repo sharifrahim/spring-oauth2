@@ -68,6 +68,18 @@ mvn spring-boot:run
 
 The application will be available at `http://localhost:8080`.
 
+### Frontend (SPA)
+
+A separate React + Vite SPA now lives in `frontend/` and talks to the Spring Boot BFF over `/api/**` using the same-site session cookie.
+
+```sh
+cd frontend
+npm install
+npm run dev # proxies /api to http://localhost:8080
+```
+
+Build outputs can be served separately (CDN) or placed in `src/main/resources/static` for single-origin deployments.
+
 ## Observability
 
 - Actuator is enabled; health probes are publicly readable while other endpoints require authentication.

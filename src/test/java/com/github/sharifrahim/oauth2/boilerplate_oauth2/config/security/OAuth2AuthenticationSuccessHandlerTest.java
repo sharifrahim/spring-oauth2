@@ -55,7 +55,7 @@ class OAuth2AuthenticationSuccessHandlerTest {
     }
 
     @Test
-    void whenNewUserAndProfileNotRequired_redirectsToDashboard() throws Exception {
+    void whenNewUserAndProfileNotRequired_redirectsToApp() throws Exception {
         String email = "new.user@example.com";
         OAuth2User oauthUser = new DefaultOAuth2User(Collections.emptyList(), Map.of("email", email, "name", "New User"), "email");
 
@@ -85,11 +85,11 @@ class OAuth2AuthenticationSuccessHandlerTest {
         assertEquals(AccountStatus.ACTIVE, savedAccount.getStatus());
         verify(oauthProviderService).save(any(OAuthProvider.class));
         verify(accountProfileService).ensureProfile(eq(persistedAccount), any(), any());
-        assertEquals("/dashboard", response.getRedirectedUrl());
+        assertEquals("http://localhost:5173/app", response.getRedirectedUrl());
     }
 
     @Test
-    void whenProfileRequiredAndIncomplete_redirectsToProfile() throws Exception {
+    void whenProfileRequiredAndIncomplete_redirectsToProfileFlag() throws Exception {
         String email = "existing.user@example.com";
         OAuth2User oauthUser = new DefaultOAuth2User(Collections.emptyList(), Map.of("email", email, "name", "Existing User"), "email");
 
@@ -113,11 +113,11 @@ class OAuth2AuthenticationSuccessHandlerTest {
         successHandler.onAuthenticationSuccess(request, response, authenticationToken);
 
         verify(oauthProviderService, never()).save(any(OAuthProvider.class));
-        assertEquals("/profile", response.getRedirectedUrl());
+        assertEquals("http://localhost:5173/app?profileRequired=true", response.getRedirectedUrl());
     }
 
     @Test
-    void whenProfileRequiredAndComplete_redirectsToDashboard() throws Exception {
+    void whenProfileRequiredAndComplete_redirectsToApp() throws Exception {
         String email = "existing.user@example.com";
         OAuth2User oauthUser = new DefaultOAuth2User(Collections.emptyList(), Map.of("email", email, "name", "Existing User"), "email");
 
@@ -141,6 +141,6 @@ class OAuth2AuthenticationSuccessHandlerTest {
         successHandler.onAuthenticationSuccess(request, response, authenticationToken);
 
         verify(oauthProviderService).save(any(OAuthProvider.class));
-        assertEquals("/dashboard", response.getRedirectedUrl());
+        assertEquals("http://localhost:5173/app", response.getRedirectedUrl());
     }
 }

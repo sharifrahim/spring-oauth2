@@ -32,7 +32,10 @@ public class ApiRateLimitInterceptor implements HandlerInterceptor {
             if (email != null) {
                 if (!apiRateLimitService.isAllowed(email)) {
                     response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-                    response.getWriter().write("Rate limit exceeded");
+                    response.setContentType("application/json");
+                    response.getWriter().write("""
+                            {"code":"rate_limited","message":"Rate limit exceeded"}
+                            """);
                     return false;
                 }
                 apiRateLimitService.recordUsage(email, request);

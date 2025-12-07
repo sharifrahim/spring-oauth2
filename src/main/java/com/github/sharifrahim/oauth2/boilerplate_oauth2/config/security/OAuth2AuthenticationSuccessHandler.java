@@ -41,6 +41,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final OAuthProviderService oauthProviderService;
     private final AccountProfileService accountProfileService;
     private final ProfileProperties profileProperties;
+    private static final String SPA_BASE_URL = "http://localhost:5173";
 
     public OAuth2AuthenticationSuccessHandler(RateLimitService rateLimitService,
                                               AccountService accountService,
@@ -122,9 +123,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             oauthUser.getAttribute("given_name")
         );
 
-        String targetUrl = "/dashboard";
+        String targetUrl = SPA_BASE_URL + "/app";
         if (profileProperties.isRequireCompletion() && !accountProfileService.isProfileComplete(profile)) {
-            targetUrl = "/profile";
+            targetUrl = SPA_BASE_URL + "/app?profileRequired=true";
         }
 
         rateLimitService.recordAttempt(request, email, AttemptType.OAUTH_START, AttemptStatus.SUCCESS);
